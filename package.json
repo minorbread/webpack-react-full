@@ -1,0 +1,34 @@
+{
+  "name": "webpack-react",
+  "version": "1.0.0",
+  "description": "full",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config ./build/webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minorbread/webpack-react-full.git"
+  },
+  "author": "zgq",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/minorbread/webpack-react-full/issues"
+  },
+  "homepage": "https://github.com/minorbread/webpack-react-full#readme",
+  "dependencies": {
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "webpack": "^4.8.3"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2015-loose": "^8.0.0",
+    "babel-preset-react": "^6.24.1",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack-cli": "^2.1.3"
+  }
+}
