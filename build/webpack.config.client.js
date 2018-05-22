@@ -1,6 +1,7 @@
 const path = require('path')
 
 const HTMLPlugin = require('html-webpack-plugin')
+const webpack = require('webpack')
 
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -11,7 +12,7 @@ const config = {
   output: {
     filename: '[name].[hash].js',
     path: path.join(__dirname, '../dist'),
-    publicPath: '/public'
+    publicPath: '/public/'                // 热更新隐藏坑
   },
   module: {
     rules: [
@@ -36,11 +37,18 @@ const config = {
 }
 
 if (isDev) {
+  // 热更新代码
+  config.entry = {
+    app: [
+      'react-hot-loader/patch',
+      path.join(__dirname,'../client/app.js')
+    ]
+  }
   config.devServer = {
     host: '0.0.0.0',    // 可在局域网下调试
     port: '8888',
     contentBase: path.join(__dirname, '../dist'),
-    // hot: true,          // 需要在react配置
+    hot: true,          // 需要在react配置
     overlay: {
       errors: true      // 错误提示
     },
@@ -49,5 +57,6 @@ if (isDev) {
       index: '/public/index.html' //截取404请求使得可以访问
     }
   }
+  config.plugins.push(new webpack.HotModuleReplacementPlugin)
 }
 module.exports = config

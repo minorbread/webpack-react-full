@@ -9,7 +9,7 @@ module.exports = {
   output: {
     filename: 'server-entry.js',    // 需要固定的输出 
     path: path.join(__dirname, '../dist'),
-    publicPath: '/public',
+    publicPath: '/public/',         // 热更新隐藏坑
     libraryTarget: 'commonjs2'
   },
   module: {
