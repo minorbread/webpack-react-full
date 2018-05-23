@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
 // 热更新代码
-import { AppContainer } from 'react-hot-loader'
+import { AppContainer } from 'react-hot-loader'   // eslint-disable-line
 
 const root = document.getElementById('root')
 const render = (Component) => {
