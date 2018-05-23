@@ -1,4 +1,5 @@
 const express = require('express')
+const favicon = require('serve-favicon')
 const ReactSSR = require('react-dom/server')
 const fs = require('fs')
 const path = require('path')
@@ -10,6 +11,7 @@ const isDev = process.env.NODE_ENV === 'development'
 // console.log(serverEntry); 读取服务器端需要渲染的代码
 const app = express()
 
+app.use(favicon(path.join(__dirname, '../favicon.ico')))
 
 
 if (!isDev) {

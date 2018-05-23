@@ -2,51 +2,25 @@ const path = require('path')
 
 const HTMLPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
+const webpackMerge = require('webpack-merge')
+const baseConfig = require('./webpack.base')
 
 const isDev = process.env.NODE_ENV === 'development'
 
-const config = {
-  resolve: {
-    extensions: ['.js','.jsx']
-  },
+const config = webpackMerge(baseConfig,   {
+
   entry: {
     app: path.join(__dirname,'../client/app.js')
   },
   output: {
     filename: '[name].[hash].js',
-    path: path.join(__dirname, '../dist'),
-    publicPath: '/public/'                // 热更新隐藏坑
-  },
-  module: {
-    rules: [
-      {
-        // 执行编译前
-        enforce: 'pre',
-        test: /.(js|jsx)$/,
-        loader: 'eslint-loader',
-        exclude: [
-          path.resolve(__dirname, '../node_modules')
-        ]
-      },
-      {
-        test: /.jsx$/,
-        loader: 'babel-loader'
-      },
-      {
-        test: /.js$/,
-        loader: 'babel-loader',
-        exclude: [
-          path.join(__dirname, '../node_modules')
-        ]
-      }
-    ]
   },
   plugins: [
     new HTMLPlugin({
       template: path.join(__dirname, '../client/template.html')
     })
   ]
-}
+})
 
 if (isDev) {
   // 热更新代码
