@@ -14,7 +14,7 @@ const serverConfig = require('../../build/webpack.config.server')
 
 let serverBundle
 
-// 读取模板 
+// 读取模板
 const getTemplate = () => {
   return new Promise((resolve, reject) => {
     axios.get('http://localhost:8888/public/index.html')
@@ -45,7 +45,7 @@ serverCompiler.watch({}, (err, stats) => {
 
   const bundlePath = path.join(
     serverConfig.output.path,
-    serverConfig.output.filename 
+    serverConfig.output.filename
   )
 
   // 内存???

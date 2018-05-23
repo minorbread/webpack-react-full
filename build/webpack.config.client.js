@@ -6,6 +6,9 @@ const webpack = require('webpack')
 const isDev = process.env.NODE_ENV === 'development'
 
 const config = {
+  resolve: {
+    extensions: ['.js','.jsx']
+  },
   entry: {
     app: path.join(__dirname,'../client/app.js')
   },
@@ -16,6 +19,15 @@ const config = {
   },
   module: {
     rules: [
+      {
+        // 执行编译前
+        enforce: 'pre',
+        test: /.(js|jsx)$/,
+        loader: 'eslint-loader',
+        exclude: [
+          path.resolve(__dirname, '../node_modules')
+        ]
+      },
       {
         test: /.jsx$/,
         loader: 'babel-loader'
@@ -53,7 +65,7 @@ if (isDev) {
       errors: true      // 错误提示
     },
     publicPath: '/public',  // 修复访问路径问题
-    historyApiFallback: {         
+    historyApiFallback: {
       index: '/public/index.html' //截取404请求使得可以访问
     }
   }

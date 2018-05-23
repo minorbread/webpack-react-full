@@ -1,7 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { AppContainer } from 'react-hot-loader'   // 热更新代码
-import App from './App.jsx'
+import App from './App'
+// 热更新代码
+import { AppContainer } from 'react-hot-loader'
 
 const root = document.getElementById('root')
 const render = (Component) => {
@@ -9,7 +10,7 @@ const render = (Component) => {
     <AppContainer>
       <Component />
     </AppContainer>,
-    root
+    root,
   )
 }
 
@@ -19,7 +20,7 @@ render(App)
 if (module.hot) {
   module.hot.accept('./App.jsx', () => {
     // 热更新时重新插入
-    const NextApp = require('./App.jsx').default
+    const NextApp = require('./App.jsx').default // eslint-disable-line
     render(NextApp)
   })
 }

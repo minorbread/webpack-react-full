@@ -16,7 +16,7 @@ if (!isDev) {
   // 不是开发环境下
   const serverEntry = require('../dist/server-entry').default
   const template = fs.readFileSync(path.join(__dirname, '../dist/index.html'), 'utf8');
-  
+
   app.use('/public', express.static(path.join(__dirname, '../dist')))
 
   app.get('*', function (req, res) {
