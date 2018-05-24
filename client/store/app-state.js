@@ -16,10 +16,10 @@ export class AppState {
 
 const appState = new AppState()
 
-/*autorun(() => {
-  console.log(appState.msg);
+autorun(() => {
+  // console.log(appState.msg);
 })
-*/
+
 setInterval(() => {
   appState.add()
 }, 1000)
