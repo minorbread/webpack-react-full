@@ -41,6 +41,9 @@ if (isDev) {
     publicPath: '/public',  // 修复访问路径问题
     historyApiFallback: {
       index: '/public/index.html' //截取404请求使得可以访问
+    },
+    proxy: {
+      '/api': 'http://localhost:3333'
     }
   }
   config.plugins.push(new webpack.HotModuleReplacementPlugin)
