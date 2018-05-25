@@ -10,6 +10,7 @@ const serialize = require('serialize-javascript')
 const ejs = require('ejs')
 const asyncBootstrap = require('react-async-bootstrapper')
 const ReactDomServer = require('react-dom/server')
+const Helmet = require('react-helmet').default
 
 const serverConfig = require('../../build/webpack.config.server')
 
@@ -26,8 +27,23 @@ const getTemplate = () => {
   })
 }
 
-// hack? module.export
-const Module = module.constructor
+// hack? module.exports
+// const Module = module.constructor
+const NativeModule = require('module')
+const vm = require('vm')
+
+// core
+const getModuleFromString = (bundle, filename) => {
+  const m = { exports: {} }
+  const wrapper = NativeModule.wrap(bundle)
+  const script = new vm.Script(wrapper, {
+    filename: filename,
+    displayErrors: true,
+  })
+  const result = script.runInThisContext()
+  result.call(m.exports, m.exports, require, m)
+  return m
+}
 
 // 服务器端编译
 const mfs = new MemoryFs()
@@ -51,9 +67,10 @@ serverCompiler.watch({}, (err, stats) => {
 
   // 内存???
   const bundle = mfs.readFileSync(bundlePath, 'utf-8')
-  const m = new Module()
+  // const m = new Module()
   // 蜜汁bug            指定文件名
-  m._compile(bundle, 'server-entry.js')
+  // m._compile(bundle, 'server-entry.js')
+  const m = getModuleFromString(bundle, 'server-entry.js')
   // commonjs ?
   serverBundle = m.exports.default
   createStoreMap = m.exports.createStoreMap
@@ -87,12 +104,17 @@ module.exports = function (app) {
           res.end()
           return
         }
+        const helmet = Helmet.rewind()
         const state = getStoreState(stores)
         const content = ReactDomServer.renderToString(app)
 
         const html = ejs.render(templace, {
           appString: content,
           initialState: serialize(state),
+          meta: helmet.meta.toString(),
+          title: helmet.title.toString(),
+          style: helmet.style.toString(),
+          link: helmet.link.toString(),
         })
         res.send(html)
         // res.send(templace.replace('<!-- app -->', content))
