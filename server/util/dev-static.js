@@ -6,15 +6,11 @@ const path = require('path')
 const MemoryFs = require('memory-fs')
 // 代理
 const proxy = require('http-proxy-middleware')
-const serialize = require('serialize-javascript')
-const ejs = require('ejs')
-const asyncBootstrap = require('react-async-bootstrapper')
-const ReactDomServer = require('react-dom/server')
-const Helmet = require('react-helmet').default
+
+const serverRender = require('./server-render')
 
 const serverConfig = require('../../build/webpack.config.server')
-
-let serverBundle, createStoreMap
+let serverBundle
 
 // 读取模板
 const getTemplate = () => {
@@ -72,18 +68,9 @@ serverCompiler.watch({}, (err, stats) => {
   // m._compile(bundle, 'server-entry.js')
   const m = getModuleFromString(bundle, 'server-entry.js')
   // commonjs ?
-  serverBundle = m.exports.default
-  createStoreMap = m.exports.createStoreMap
-
+  serverBundle = m.exports
 
 })
-
-const getStoreState = (stores) => {
-  return Object.keys(stores).reduce((result, storeName) => {
-    result[storeName] = stores[storeName].toJson()
-    return result
-  }, {})
-}
 
 module.exports = function (app) {
 
@@ -91,35 +78,14 @@ module.exports = function (app) {
     target: 'http://localhost:8888/'
   }))
 
+  app.get('*', function (req, res, next) {
+    if (!serverBundle) {
+      return res.send('waiting for compile, refresh later')
+    }
 
-  app.get('*', function (req, res) {
-    getTemplate().then(templace => {
-
-      const routerContext = {}
-      const stores = createStoreMap()
-      const app = serverBundle(stores, routerContext, req.url)
-      asyncBootstrap(app).then(() => {
-        if (routerContext.url) {
-          res.status(302).setHeader('Location', routerContext.url)
-          res.end()
-          return
-        }
-        const helmet = Helmet.rewind()
-        const state = getStoreState(stores)
-        const content = ReactDomServer.renderToString(app)
-
-        const html = ejs.render(templace, {
-          appString: content,
-          initialState: serialize(state),
-          meta: helmet.meta.toString(),
-          title: helmet.title.toString(),
-          style: helmet.style.toString(),
-          link: helmet.link.toString(),
-        })
-        res.send(html)
-        // res.send(templace.replace('<!-- app -->', content))
-      })
-    })
+    getTemplate().then(template => {
+      serverRender(serverBundle, template, req, res)
+    }).catch(next)
   })
 
 }
