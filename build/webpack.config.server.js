@@ -14,3 +14,4 @@ module.exports = webpackMerge(baseConfig, {
     libraryTarget: 'commonjs2'
   },
 })
+
