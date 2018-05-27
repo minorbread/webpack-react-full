@@ -28,6 +28,7 @@ const config = webpackMerge(baseConfig,   {
 
 if (isDev) {
   // 热更新代码
+  config.devtool = '#cheap-module-eval-source-map'
   config.entry = {
     app: [
       'react-hot-loader/patch',
@@ -37,12 +38,12 @@ if (isDev) {
   config.devServer = {
     host: '0.0.0.0',    // 可在局域网下调试
     port: '8888',
-    contentBase: path.join(__dirname, '../dist'),
+    // contentBase: path.join(__dirname, '../dist'),
     hot: true,          // 需要在react配置
     overlay: {
       errors: true      // 错误提示
     },
-    publicPath: '/public',  // 修复访问路径问题
+    publicPath: '/public/',  // 修复访问路径问题
     historyApiFallback: {
       index: '/public/index.html' //截取404请求使得可以访问
     },
