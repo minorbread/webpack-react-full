@@ -2,20 +2,32 @@ import React from 'react'
 import { observer, inject } from 'mobx-react'
 import PropTypes from 'prop-types'
 import Helmet from 'react-helmet'
-import Button from 'material-ui/Button'
+import Tabs, { Tab } from 'material-ui/Tabs'
+import List from 'material-ui/List'
+import { CircularProgress } from 'material-ui/Progress'
 
 import { AppState } from '../../store/app-state'
 import Container from '../layout/container'
+import TopicListItem from './list-item'
 
-@inject('appState') @observer
+@inject((stores) => {
+  return {
+    appState: stores.appState,
+    topicStore: stores.topicStore,
+  }
+}) @observer
 export default class TopicList extends React.Component {
   constructor() {
     super()
-    this.changeName = this.changeName.bind(this)
+    this.state = {
+      tabIndex: 0,
+    }
+    this.changeTab = this.changeTab.bind(this)
+    this.listItemclick = this.listItemclick.bind(this)
   }
 
   componentDidMount() {
-    // dosomeing
+    this.props.topicStore.fetchTopics()
   }
 
   asyncBootstrap() {
@@ -27,25 +39,60 @@ export default class TopicList extends React.Component {
     })
   }
 
-  changeName(event) {
-    this.props.appState.changeName(event.target.value)
+
+  changeTab(e, index) {
+    this.setState({
+      tabIndex: index,
+    })
   }
 
+  /* eslint-disable */
+  listItemclick() {
+
+  }
+  /* eslint-enable */
+
   render() {
+    const { tabIndex } = this.state
+    const { topicStore } = this.props
+
+    const topicList = topicStore.topics
+    const syncingTopics = topicStore.syncing
+
     return (
       <Container>
         <Helmet>
           <title>This is topic list</title>
           <meta name="description" content="This is description" />
         </Helmet>
-        <Button raised color="primary" >This is a button</Button>
-        <input type="text" onChange={this.changeName} />
-        <span>{this.props.appState.msg}</span>
+        <Tabs value={tabIndex} onChange={this.changeTab} >
+          <Tab label="全部" />
+          <Tab label="分享" />
+          <Tab label="工作" />
+          <Tab label="问答" />
+          <Tab label="精品" />
+          <Tab label="测试" />
+        </Tabs>
+        <List>
+          {
+            topicList.map(topic => <TopicListItem onClick={this.listItemclick} topic={topic} />)
+          }
+        </List>
+        {
+          syncingTopics ?
+            (
+              <div>
+                <CircularProgress color="accent" size={100} />
+              </div>
+            ) :
+            null
+        }
       </Container>
     )
   }
 }
 
-TopicList.propTypes = {
+TopicList.wrappedComponent.propTypes = {
   appState: PropTypes.instanceOf(AppState).isRequired,
+  topicStore: PropTypes.object.isRequired,
 }
