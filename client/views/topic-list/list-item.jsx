@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import cx from 'classnames'
 
 import ListItem from 'material-ui/List/ListItem'
 import ListItemAvatar from 'material-ui/List/ListItemAvatar'
@@ -9,11 +10,16 @@ import { withStyles } from 'material-ui/styles'
 
 import { topicPrimaryStyle, topicSecondaryStyle } from './styles'
 
+import { tabs } from '../../util/variable-define'
 
 const Primary = ({ classes, topic }) => {
+  const classNames = cx({
+    [classes.tab]: true,
+    [classes.top]: topic.top,
+  })
   return (
     <div className={classes.root}>
-      <span className={classes.tab}>{topic.tab}</span>
+      <span className={classNames}>{topic.top ? '置顶' : tabs[topic.tab]}</span>
       <span className={classes.title}>{topic.title}</span>
     </div>
   )
